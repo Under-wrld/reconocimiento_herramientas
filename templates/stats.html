@@ -10,7 +10,7 @@
     <h2 class="mb-4">Desempeño del Modelo</h2>
 
     <!-- Imagen con la gráfica -->
-    <img src="{{ url_for('static', filename=ruta_img) }}" alt="Gráfica de entrenamiento" class="img-fluid shadow" style="max-height: 500px;">
+    <img src="{{ url_for('static', filename='stats/entrenamiento.png') }}?v={{ config['RANDOM'] }}" class="img-fluid">
     <h4 class="mt-5">Matriz de Confusión</h4>
     <img src="{{ url_for('static', filename='stats/matriz_confusion.png') }}" class="img-fluid shadow mt-3" alt="Matriz de Confusión" style="max-width: 500px;">
 

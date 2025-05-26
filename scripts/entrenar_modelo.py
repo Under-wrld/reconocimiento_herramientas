@@ -1,24 +1,34 @@
 import os
 import shutil
 import tensorflow as tf
+from tensorflow.keras import Input
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.metrics import Precision, Recall
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
 import pandas as pd
 
 def construir_modelo(num_clases, input_shape=(224, 224, 3), metrics=['accuracy']):
     model = Sequential([
-        Conv2D(32, (3, 3), activation='relu', input_shape=input_shape),
-        MaxPooling2D(2, 2),
-        Dropout(0.2),
+        Input(shape=input_shape),
 
-        Conv2D(64, (3, 3), activation='relu'),
-        MaxPooling2D(2, 2),
-        Dropout(0.3),
+        Conv2D(32, (3,3), activation='relu', padding='same'),
+        BatchNormalization(),
+        Conv2D(32, (3,3), activation='relu', padding='same'),
+        MaxPooling2D(2,2),
+        Dropout(0.25),
+
+        Conv2D(128, (3,3), activation='relu', padding='same'),
+        BatchNormalization(),
+        Conv2D(128, (3,3), activation='relu', padding='same'),
+        MaxPooling2D(2,2),
+        Dropout(0.4),
 
         Flatten(),
         Dense(128, activation='relu'),
@@ -38,8 +48,6 @@ def graficar_historial(historial, ruta='static/stats/entrenamiento.png'):
 
     #detectamos todas las metricas que tienen version de validacion
     metricas = [k for k in historial.history.keys() if not k.startswith('val_') and k != 'loss']
-    tiene_val = any(f'val_{m}' in historial.history for m in metricas)
-
     num_graficas = len(metricas) + 1  # +1 para perdida
     plt.figure(figsize=(5 * num_graficas, 4))
     
@@ -106,16 +114,22 @@ def generar_matriz_confusion(modelo, val_data, clases, ruta='static/stats/matriz
     print("Matriz de confusión guardada en:", ruta)
 
 
-def entrenar_modelo(data_dir='data/entrenar/', img_size=(224, 224), batch_size=4, epochs=15, metrics=None):
+def entrenar_modelo(data_dir='data/entrenar/', img_size=(224, 224), batch_size=4, epochs=30, metrics=None):
     #aumentación de datos y división en entrenamiento/validación
     datagen = ImageDataGenerator(
-        rescale=1./255,
-        validation_split=0.3,
-        rotation_range=20,
-        zoom_range=0.2,
-        horizontal_flip=True,
-        fill_mode='nearest'
-    )
+    rescale=1./255,
+    validation_split=0.3,
+
+    rotation_range=30,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    zoom_range=0.3,
+    brightness_range=(0.7, 1.3),
+    shear_range=20,
+    horizontal_flip=True,
+    vertical_flip=False,
+    fill_mode='nearest'
+)
 
     #datos de entrenamiento
     train_data = datagen.flow_from_directory(
@@ -136,6 +150,7 @@ def entrenar_modelo(data_dir='data/entrenar/', img_size=(224, 224), batch_size=4
     )
 
     num_clases = len(train_data.class_indices)  #detecta automáticamente número de clases
+    clases = list(train_data.class_indices.keys())
 
     if metrics is None:
         metrics = ['accuracy']
@@ -143,7 +158,7 @@ def entrenar_modelo(data_dir='data/entrenar/', img_size=(224, 224), batch_size=4
     #construccion del modelo
     model = construir_modelo(num_clases=num_clases, input_shape=(img_size[0], img_size[1], 3))
 
-    early_stop = EarlyStopping(monitor='val_loss', patience=4, restore_best_weights=True) 
+    early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True) 
     checkpoint = ModelCheckpoint('modelos/mejor_modelo.h5', monitor='val_loss', save_best_only=True)
   
 
@@ -160,12 +175,10 @@ def entrenar_modelo(data_dir='data/entrenar/', img_size=(224, 224), batch_size=4
     shutil.copy('modelos/mejor_modelo.h5', 'modelos/modelo_final.h5')
 
     graficar_historial(historial)
-    clases = list(train_data.class_indices.keys())
     generar_reporte_clasificacion(model, val_data, clases)
     generar_matriz_confusion(model, val_data, clases)
 
     print("-------------Entrenamiento completo y modelo guardado.-------------")
 
 if __name__ == "__main__":
-    from tensorflow.keras.metrics import Precision, Recall
     entrenar_modelo(metrics=['accuracy', Precision(), Recall()])

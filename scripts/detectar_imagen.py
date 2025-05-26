@@ -3,13 +3,11 @@ import numpy as np
 import cv2
 import os
 
-#donde se esta entrenado el modelo
-train_dir = 'data/entrenar/'
-modelo_path = 'modelos/modelo_final.h5'
-
-clases = sorted([nombre for nombre in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, nombre))]) #en base a las carpetas del directorio 
 
 def predecir_herramienta(imagen_path, top_k=3, modelo_path='modelos/modelo_final.h5', train_dir='data/entrenar/'):
+
+    clases = sorted([nombre for nombre in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, nombre))]) #en base a las carpetas del directorio 
+
     #cargar el modelo
     if not os.path.exists(modelo_path):
         raise FileNotFoundError(f"No se encontró el modelo en {modelo_path}. Entrénalo primero.")

@@ -6,6 +6,7 @@ import shutil
 import os
 import hashlib
 import json
+import random
 
 LOG_PATH = 'feedback_log.json'
 
@@ -76,20 +77,22 @@ def feedback():
         flash('Esta imagen ya fue corregida anteriormente. No se volverá a integrar.')
         return redirect(url_for('index'))
 
-    #solo guardar si fue corregida correctamente
-    if etiqueta_correcta != last_prediction:
-        carpeta_destino = os.path.join(app.config['FEEDBACK_FOLDER'], etiqueta_correcta)
-        os.makedirs(carpeta_destino, exist_ok=True)
-        shutil.copy(last_image_path, carpeta_destino)
+    #guardar la imagen en la clase validada por el usuario
+    carpeta_destino = os.path.join('data/entrenar', etiqueta_correcta)
+    os.makedirs(carpeta_destino, exist_ok=True)
+    shutil.copy(last_image_path, carpeta_destino)
 
-        feedback_log[imagen_hash] = etiqueta_correcta  #registrar corrección
-        with open(LOG_PATH, 'w') as f:
-            json.dump(feedback_log, f, indent=4)
+    #registrar en el log
+    feedback_log[imagen_hash] = etiqueta_correcta
+    with open(LOG_PATH, 'w') as f:
+        json.dump(feedback_log, f, indent=4)
 
-        flash(f'Gracias por tu corrección. El modelo será actualizado con la clase "{etiqueta_correcta}".')
-        integrar_feedback_y_reentrenar()
-    else:
-        flash('La predicción fue correcta. No se necesita reentrenamiento.')
+    flash(f'Imagen guardada en la clase "{etiqueta_correcta}". El modelo será reentrenado.')
+    integrar_feedback_y_reentrenar()
+
+     #limpiar uploads
+    if os.path.exists(last_image_path):
+        os.remove(last_image_path)
 
     return redirect(url_for('index'))
 
@@ -100,7 +103,7 @@ def stats():
         flash('Aún no hay estadísticas disponibles. Entrena el modelo primero.')
         return redirect(url_for('index'))
 
-    return render_template('stats.html', ruta_img=ruta_img)
+    return render_template('stats.html', ruta_img=ruta_img, config={'RANDOM': random.randint(0, 10000)})
 
 #funcion para calcular hash de la imagen
 def calcular_hash_imagen(path):
