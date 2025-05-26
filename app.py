@@ -39,7 +39,9 @@ def index():
         last_image_path = ruta
         last_prediction = clase
 
-        return render_template('feedback.html', pred=clase, conf=confianza, img_rel=ruta_relativa)
+        train_dir = 'data/entrenar/'
+        clases = sorted([nombre for nombre in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, nombre))])
+        return render_template('feedback.html', pred=clase, conf=confianza, img_rel=ruta_relativa, clases=clases)
 
 
     return render_template('index.html', resultado=resultado, imagen=ruta_relativa)
