@@ -12,8 +12,14 @@ __pycache__/
 *.log
 .DS_Store
 
-#imagen estadisticas
-stats
+#Toda la carpeta estadisticas
+static
 
 #hashes de las imagenes
 feedback_log.json
+
+installed.txt
+
+comprimir_clases.py
+
+/data/
