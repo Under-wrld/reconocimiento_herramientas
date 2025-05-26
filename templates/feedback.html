@@ -16,6 +16,20 @@
         Confianza: <strong>{{ (conf * 100)|round(2) }}%</strong></p>
     </div>
 
+    {% if predicciones %}
+        <div class="mt-4 text-center">
+            <h5>Otras posibles herramientas:</h5>
+            <ul class="list-group w-50 mx-auto">
+                {% for clase, conf in predicciones[1:] %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ clase.capitalize() }}</span>
+                        <span class="text-muted">{{ (conf * 100)|round(2) }}%</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
     <!--formulario de feedback -->
     <div class="card p-4 shadow-sm">
         <form method="POST" action="{{ url_for('feedback') }}">

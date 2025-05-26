@@ -3,3 +3,7 @@ tensorflow
 opencv-python
 matplotlib
 numpy
+scipy
+scikit-learn
+pandas
+seaborn

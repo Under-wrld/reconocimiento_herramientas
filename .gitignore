@@ -1,16 +1,19 @@
-# Entorno virtual
+#entorno virtual
 herramientas-env/
 
-# Archivos de caché
+#caché
 __pycache__/
 *.pyc
 
-# Modelos entrenados (opcional si son grandes o confidenciales)
+# los  modelos entrenados (opcional si son grandes o confidenciales)
 *.h5
 
-# Archivos temporales
+#archivos temporales
 *.log
 .DS_Store
 
 #imagen estadisticas
 stats
+
+#hashes de las imagenes
+feedback_log.json

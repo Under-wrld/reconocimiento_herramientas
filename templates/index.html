@@ -27,6 +27,7 @@
             <input type="file" name="imagen" class="form-control" accept="image/*" required>
         </div>
         <button type="submit" class="btn btn-primary">Analizar Imagen</button>
+        <a href="{{ url_for('stats') }}" class="btn btn-outline-info mt-3">Ver estadísticas del modelo</a>
     </form>
 
     {% if resultado %}

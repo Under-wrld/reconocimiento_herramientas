@@ -5,7 +5,13 @@ from scripts.entrenar_modelo import entrenar_modelo
 def integrar_feedback_y_reentrenar(feedback_dir='feedback/', train_dir='data/entrenar/'):
     feedback_integrado = False
 
+    clases_validas = sorted([nombre for nombre in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, nombre))])
+
     for clase in os.listdir(feedback_dir):
+        if clase not in clases_validas:
+            print(f"Clase inválida detectada en feedback: '{clase}'. Se ignora.")
+            continue
+
         origen = os.path.join(feedback_dir, clase)
         destino = os.path.join(train_dir, clase)
 
