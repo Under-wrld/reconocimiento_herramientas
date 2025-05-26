@@ -1,0 +1,13 @@
+# Entorno virtual
+herramientas-env/
+
+# Archivos de caché
+__pycache__/
+*.pyc
+
+# Modelos entrenados (opcional si son grandes o confidenciales)
+*.h5
+
+# Archivos temporales
+*.log
+.DS_Store
