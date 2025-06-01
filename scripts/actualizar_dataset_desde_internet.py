@@ -47,7 +47,7 @@ def limpiar_duplicados_y_renombrar(clase, carpeta):
 
     print(f"Imágenes duplicadas o inválidas eliminadas: {eliminadas}")
 
-def descargar_imagenes(clase, n=300, destino_base='data/entrenar/'):
+def descargar_imagenes(clase, n=100, destino_base='data/entrenar/'):
     destino = os.path.join(destino_base, clase)
     os.makedirs(destino, exist_ok=True)
 
@@ -71,7 +71,7 @@ def descargar_imagenes(clase, n=300, destino_base='data/entrenar/'):
 
     limpiar_duplicados_y_renombrar(clase, destino)
 
-def actualizar_y_entrenar(clases, imagenes_por_clase=300):
+def actualizar_y_entrenar(clases, imagenes_por_clase=100):
     for clase in clases:
         descargar_imagenes(clase, imagenes_por_clase)
 
@@ -81,5 +81,8 @@ def actualizar_y_entrenar(clases, imagenes_por_clase=300):
 
 # ----------- USO -------------
 if __name__ == "__main__":
-    clases_a_buscar = ['martillo', 'llave_inglesa', 'destornillador', 'gatos_hidraulicos']
-    actualizar_y_entrenar(clases_a_buscar, imagenes_por_clase=300)
+    clases_a_buscar = ['martillo', 'llave_inglesa', 'destornillador', 'gato_hidraulico', 
+                       'alicate', 'chicharra_neumatica', 'copa_automotriz','lampara_de_prueba_automotriz',
+                       'llave_allen', 'llave_de_impacto', 'multimetro']
+    
+    actualizar_y_entrenar(clases_a_buscar, imagenes_por_clase=100)

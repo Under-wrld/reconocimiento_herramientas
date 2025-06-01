@@ -4,6 +4,7 @@ import cv2
 import os
 
 
+
 def predecir_herramienta(imagen_path, top_k=3, modelo_path='modelos/modelo_final.h5', train_dir='data/entrenar/'):
 
     clases = sorted([nombre for nombre in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, nombre))]) #en base a las carpetas del directorio 

@@ -9,11 +9,24 @@
 <div class="container py-5">
     <h2 class="text-center mb-4">Resultado del Análisis</h2>
 
-    <!--imagen y prediccion -->
+    <!-- Flash message (éxito o error) -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-info text-center">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Imagen y predicción -->
     <div class="text-center mb-4">
-        <img src="{{ url_for('static', filename=img_rel) }}" alt="Herramienta detectada" class="img-fluid" style="max-height: 400px;">
-        <p class="mt-3 fs-5">Predicción: <strong>{{ pred|capitalize }}</strong><br>
-        Confianza: <strong>{{ (conf * 100)|round(2) }}%</strong></p>
+        <img src="{{ url_for('static', filename=img_rel) }}" alt="Herramienta detectada" class="img-fluid rounded shadow" style="max-height: 400px;">
+        <p class="mt-3 fs-5">
+            <span class="badge bg-primary">Predicción:</span> <strong>{{ pred|capitalize }}</strong><br>
+            <span class="badge bg-secondary">Confianza:</span> <strong>{{ (conf * 100)|round(2) }}%</strong>
+        </p>
     </div>
 
     {% if predicciones %}
@@ -30,9 +43,11 @@
         </div>
     {% endif %}
 
-    <!--formulario de feedback -->
-    <div class="card p-4 shadow-sm">
-        <form method="POST" action="{{ url_for('feedback') }}">
+    <!-- Formulario de feedback -->
+    <div class="card p-4 shadow-sm mt-4">
+        <form method="POST" action="{{ url_for('feedback.feedback') }}">
+            <input type="hidden" name="imagen_path" value="{{ img_rel }}">
+
             <div class="mb-3">
                 <label for="etiqueta" class="form-label">¿Es correcta la predicción?</label>
                 <select name="etiqueta" class="form-select" required>
@@ -42,14 +57,14 @@
                     {% endfor %}
                 </select>
             </div>
-            <button type="submit" class="btn btn-success">enviar Feedback</button>
+
+            <button type="submit" class="btn btn-success w-100">✅ Enviar Feedback</button>
         </form>
     </div>
 
     <div class="mt-4 text-center">
-        <a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">volver al inicio</a>
+        <a href="{{ url_for('imagen.index') }}" class="btn btn-secondary mt-3">🏠 Volver al inicio</a>
     </div>
 </div>
-
 </body>
 </html>
