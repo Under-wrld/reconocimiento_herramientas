@@ -3,7 +3,13 @@ import numpy as np
 import cv2
 import os
 
-
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    print("GPU detectada:", gpus)
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+else:
+    print("No se detectó GPU. Asegúrate de haber instalado CUDA y cuDNN.")
 
 def predecir_herramienta(imagen_path, top_k=3, modelo_path='modelos/modelo_final.h5', train_dir='data/entrenar/'):
 
@@ -26,7 +32,6 @@ def predecir_herramienta(imagen_path, top_k=3, modelo_path='modelos/modelo_final
     #normalizacion y adaptacion la dimensión para TensorFlow
     img = cv2.resize(img, (224, 224)) / 255.0
     img = img.reshape(1, 224, 224, 3)
-
 
     pred = modelo.predict(img)[0]  # obtener vector directamente
     indices = np.argsort(pred)[::-1][:top_k]

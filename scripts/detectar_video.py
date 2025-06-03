@@ -2,7 +2,16 @@ import cv2
 import numpy as np
 import json
 from tqdm import tqdm
-from sort import Sort 
+from scripts.sort import Sort 
+import tensorflow as tf
+
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    print("GPU detectada:", gpus)
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+else:
+    print("No se detectó GPU. Asegúrate de haber instalado CUDA y cuDNN.")
 
 def procesar_video_con_tracking(video_path, modelo, clases, output_path='static/resultado_tracking.mp4', json_output='static/predicciones_tracking.json'):
     cap = cv2.VideoCapture(video_path)

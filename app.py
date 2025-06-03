@@ -5,6 +5,7 @@ from model_manager import ModelManager
 from blueprints.imagen import imagen_bp
 from blueprints.video import video_bp
 from blueprints.feedback import feedback_bp
+from blueprints.stats import stats_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -16,6 +17,7 @@ app.model_manager = model_manager
 app.register_blueprint(imagen_bp)
 app.register_blueprint(video_bp)
 app.register_blueprint(feedback_bp)
+app.register_blueprint(stats_bp)
 
 if __name__ == '__main__':
     import os

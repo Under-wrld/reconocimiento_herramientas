@@ -28,7 +28,7 @@
             <input type="file" name="imagen" class="form-control" accept="image/*" required>
         </div>
         <button type="submit" class="btn btn-primary">Analizar Imagen</button>
-        <a href="{{ url_for('stats') }}" class="btn btn-outline-info mt-3">Ver estadísticas del modelo</a>
+        <a href="{{ url_for('stats.mostrar_stats') }}" class="btn btn-outline-info mt-3">Ver estadísticas del modelo</a>
     </form>
 
     {% if resultado %}
@@ -39,12 +39,4 @@
     {% endif %}
 
     <!-- Acceso a análisis de video con tracking -->
-    <div class="text-center mt-5">
-        <a href="{{ url_for('video.deteccion_video_tracking') }}" class="btn btn-success btn-lg">
-            Analizar Video con Tracking
-        </a>
-    </div>
-</div>
-
-</body>
-</html>
+    <div class="text-cent

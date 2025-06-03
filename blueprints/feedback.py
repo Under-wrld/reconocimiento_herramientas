@@ -10,7 +10,7 @@ feedback_bp = Blueprint('feedback', __name__)
 @feedback_bp.route('/feedback', methods=['POST'])
 def feedback():
     etiqueta_correcta = request.form['etiqueta'].strip().lower()
-    imagen_rel_path = request.form['imagen_path'].strip()  # ej: uploads/abc.jpg
+    imagen_rel_path = request.form['imagen_path'].strip()
     imagen_path = os.path.join(current_app.config['UPLOAD_FOLDER'], os.path.basename(imagen_rel_path))
 
     if not etiqueta_correcta:

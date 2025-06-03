@@ -2,7 +2,7 @@ import os
 import shutil
 from scripts.entrenar_modelo import entrenar_modelo
 
-def integrar_feedback_y_reentrenar(feedback_dir='feedback/', train_dir='data/entrenar/'):
+def integrar_feedback_y_reentrenar(feedback_dir='feedback/', train_dir='data/entrenar/', epochs=5):
     feedback_integrado = False
 
     clases_validas = sorted([nombre for nombre in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, nombre))])
@@ -22,17 +22,15 @@ def integrar_feedback_y_reentrenar(feedback_dir='feedback/', train_dir='data/ent
                 archivo_origen = os.path.join(origen, archivo)
                 archivo_destino = os.path.join(destino, archivo)
 
-                #solo si no existe una copia en el set de entrenamiento
                 if not os.path.exists(archivo_destino):
                     shutil.move(archivo_origen, archivo_destino)
                     feedback_integrado = True
 
-            #limpiamos la carpeta feedback una vez hayamos movido su contenido
             shutil.rmtree(origen)
-        
+
     if feedback_integrado:
         print("Feedback nuevo detectado. Reentrenando modelo...")
-        entrenar_modelo(epochs=5) #entrenamiento rápido
     else:
-        print("No hay feedback nuevo para integrar.")
+        print("No hay feedback nuevo, pero se procederá a reentrenar el modelo igual.")
 
+    entrenar_modelo(epochs=epochs)  # Reentrena siempre

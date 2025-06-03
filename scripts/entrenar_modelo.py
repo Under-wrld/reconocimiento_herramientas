@@ -14,6 +14,14 @@ from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
 import pandas as pd
 
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    print("GPU detectada:", gpus)
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+else:
+    print("No se detectó GPU. Asegúrate de haber instalado CUDA y cuDNN.")
+
 def construir_modelo(num_clases, input_shape=(224, 224, 3), metrics=['accuracy']):
     model = Sequential([
         Input(shape=input_shape),
@@ -129,7 +137,7 @@ def entrenar_modelo(data_dir='data/entrenar/', img_size=(224, 224), batch_size=4
     horizontal_flip=True,
     vertical_flip=False,
     fill_mode='nearest'
-)
+    )
 
     #datos de entrenamiento
     train_data = datagen.flow_from_directory(
@@ -161,7 +169,6 @@ def entrenar_modelo(data_dir='data/entrenar/', img_size=(224, 224), batch_size=4
     early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True) 
     checkpoint = ModelCheckpoint('modelos/mejor_modelo.h5', monitor='val_loss', save_best_only=True)
   
-
     #entrenamiento
     historial = model.fit(
         train_data,
