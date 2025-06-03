@@ -13,9 +13,9 @@ if gpus:
     try:
         for gpu in gpus:
             tf.config.experimental.set_memory_growth(gpu, True)
-        print("✅ TensorFlow configurado para usar GPU con crecimiento dinámico de memoria.")
+        print("TensorFlow configurado para usar GPU con crecimiento dinámico de memoria.")
     except RuntimeError as e:
-        print("❌ Error al configurar GPU:", e)
+        print("Error al configurar GPU:", e)
 
 # Ejecutar el análisis de video con tracking
 procesar_video_con_tracking(

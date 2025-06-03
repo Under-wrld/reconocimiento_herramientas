@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 import json
@@ -14,6 +15,10 @@ else:
     print("No se detectó GPU. Asegúrate de haber instalado CUDA y cuDNN.")
 
 def procesar_video_con_tracking(video_path, modelo, clases, output_path='static/resultado_tracking.mp4', json_output='static/predicciones_tracking.json'):
+    # Crear carpetas si no existen
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    os.makedirs(os.path.dirname(json_output), exist_ok=True)
+
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
         raise ValueError("No se pudo abrir el video.")
@@ -23,7 +28,7 @@ def procesar_video_con_tracking(video_path, modelo, clases, output_path='static/
     fps = int(cap.get(cv2.CAP_PROP_FPS))
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Asegúrate que coincide con la extensión del archivo
     out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
     tracker = Sort()

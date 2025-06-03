@@ -9,38 +9,23 @@ if gpus:
     for gpu in gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
 else:
-    print("No se detectó GPU. Asegúrate de haber instalado CUDA y cuDNN.")
+    print("No se detectó GPU")
 
-def predecir_herramienta(imagen_path, top_k=3, modelo_path='modelos/modelo_final.h5', train_dir='data/entrenar/'):
+modelo = tf.keras.models.load_model('modelos/modelo_final.h5')
+clases = sorted([nombre for nombre in os.listdir('data/entrenar') if os.path.isdir(os.path.join('data/entrenar', nombre))])
+print("Modelo cargado")
 
-    clases = sorted([nombre for nombre in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, nombre))]) #en base a las carpetas del directorio 
+#Lee la imagen
+imagen = cv2.imread('ejemplos/llave_inglesa.jpg')
+imagen_rgb = cv2.cvtColor(imagen, cv2.COLOR_BGR2RGB)
+imagen_redimensionada = cv2.resize(imagen_rgb, (224, 224))
+imagen_redimensionada = imagen_redimensionada.astype(np.float32) / 255.0
+imagen_redimensionada = np.expand_dims(imagen_redimensionada, axis=0)
 
-    #cargar el modelo
-    if not os.path.exists(modelo_path):
-        raise FileNotFoundError(f"No se encontró el modelo en {modelo_path}. Entrénalo primero.")
-    
-    #verificar imagen
-    if not os.path.exists(imagen_path):
-        raise FileNotFoundError(f"No se encontró la imagen en {imagen_path}.")
-    
-    modelo = tf.keras.models.load_model(modelo_path)#carga modelo
+#las predicción
+pred = modelo.predict(imagen_redimensionada, verbose=0)[0]
+indice = np.argmax(pred)
+clase = clases[indice]
+confianza = pred[indice]
 
-    img = cv2.imread(imagen_path)
-    if img is None:
-        raise ValueError(f"No se pudo leer la imagen. Asegúrate de que sea una imagen válida.")
-    
-    #normalizacion y adaptacion la dimensión para TensorFlow
-    img = cv2.resize(img, (224, 224)) / 255.0
-    img = img.reshape(1, 224, 224, 3)
-
-    pred = modelo.predict(img)[0]  # obtener vector directamente
-    indices = np.argsort(pred)[::-1][:top_k]
-
-
-    resultados = [(clases[i], float(pred[i])) for i in indices]  # lista de (clase, confianza)
-    
-    print("Predicciones top-k:")
-    for clase, conf in resultados:
-        print(f"  {clase}: {conf:.2%}")
-
-    return resultados  # una lista de tuplas (clase, confianza)
+print(f"Predicción: {clase} ({confianza * 100:.2f}%)")
